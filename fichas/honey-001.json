@@ -1,0 +1,13 @@
+{
+    "id": "honey-001",
+    "nombre": "Honey Bella",
+    "especie": "Perro",
+    "raza": "Coquer spaniel",
+    "edad": "2 años",
+    "microchip": "981000012345678",
+    "salud_notas": "Esterilizada. Toma medicación renal. Muy asustadiza.",
+    "dueno": "Carlos Mendoza",
+    "telefono": "527441794526",
+    "direccion": "cuajimalpa, CDMX",
+    "foto_url": ""
+}
