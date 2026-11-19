@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dartha Pet • Identificación</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #0ea5e9;
+            --danger-bg: #fef2f2;
+            --danger-border: #ef4444;
+            --danger-text: #991b1b;
+            --whatsapp: #25D366;
+            --call: #2563eb;
+            --bg: #f1f5f9;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container { width: 100%; max-width: 420px; }
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: none;
+        }
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 24px 20px;
+            text-align: center;
+        }
+        .avatar {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: #334155;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            border: 3px solid rgba(255,255,255,0.2);
+            object-fit: cover;
+        }
+        .header h1 { font-size: 26px; margin-bottom: 4px; }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+        }
+        .body { padding: 20px; }
+        .alert-box {
+            background: var(--danger-bg);
+            border-left: 4px solid var(--danger-border);
+            color: var(--danger-text);
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .alert-title { font-weight: 700; display: block; margin-bottom: 2px; }
+        .info-list { list-style: none; margin-bottom: 20px; }
+        .info-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            gap: 12px;
+        }
+        .info-list li:last-child { border-bottom: none; }
+        .label { color: #64748b; font-weight: 500; white-space: nowrap; }
+        .value { font-weight: 600; text-align: right; }
+        .actions { display: flex; flex-direction: column; gap: 10px; }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-wa { background: var(--whatsapp); }
+        .btn-call { background: var(--call); }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            padding: 14px;
+            background: #f8fafc;
+        }
+        .status-msg {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 16px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="status" class="status-msg">Cargando ficha de identificación...</div>
+
+        <div id="card" class="card">
+            <div class="header">
+                <div id="avatar-emoji" class="avatar">🐾</div>
+                <img id="avatar-img" class="avatar" style="display:none;" alt="Foto de mascota">
+                <h1 id="nombre"></h1>
+                <span id="especie-raza" class="badge"></span>
+            </div>
+
+            <div class="body">
+                <div id="alert-container" class="alert-box" style="display:none;">
+                    <span class="alert-title">⚠️ Salud y Cuidados</span>
+                    <span id="salud-notas"></span>
+                </div>
+
+                <ul class="info-list">
+                    <li><span class="label">👤 Responsable</span><span id="dueno" class="value"></span></li>
+                    <li><span class="label">🎂 Edad</span><span id="edad" class="value"></span></li>
+                    <li><span class="label">📍 Zona / Dirección</span><span id="direccion" class="value"></span></li>
+                    <li><span class="label">🆔 Microchip</span><span id="microchip" class="value"></span></li>
+                </ul>
+
+                <div class="actions">
+                    <button id="btn-wa" class="btn btn-wa">📲 Enviar ubicación por WhatsApp</button>
+                    <a id="btn-call" href="#" class="btn btn-call">📞 Llamar al dueño</a>
+                </div>
+            </div>
+
+            <div class="footer">Identificación inteligente • Dartha Pet</div>
+        </div>
+    </div>
+
+    <script>
+        const statusEl = document.getElementById('status');
+        const cardEl = document.getElementById('card');
+        const params = new URLSearchParams(window.location.search);
+        const idMascota = params.get('id');
+
+        // Validar formato seguro del ID (solo letras, números, guiones)
+        if (!idMascota || !/^[a-zA-Z0-9_-]+$/.test(idMascota)) {
+            statusEl.textContent = '❌ Código de placa no válido o incompleto.';
+        } else {
+            fetch(`./fichas/${idMascota}.json`)
+                .then(res => {
+                    if (!res.ok) throw new Error('No encontrado');
+                    return res.json();
+                })
+                .then(data => {
+                    document.title = `${data.nombre} • Dartha Pet`;
+                    document.getElementById('nombre').textContent = data.nombre;
+                    document.getElementById('especie-raza').textContent = `${data.especie} • ${data.raza}`;
+                    document.getElementById('dueno').textContent = data.dueno;
+                    document.getElementById('edad').textContent = data.edad || 'No especificada';
+                    document.getElementById('direccion').textContent = data.direccion || 'No especificada';
+                    document.getElementById('microchip').textContent = data.microchip || 'Sin registro';
+
+                    if (data.salud_notas) {
+                        document.getElementById('salud-notas').textContent = data.salud_notas;
+                        document.getElementById('alert-container').style.display = 'block';
+                    }
+
+                    if (data.foto_url) {
+                        const img = document.getElementById('avatar-img');
+                        img.src = data.foto_url;
+                        img.style.display = 'block';
+                        document.getElementById('avatar-emoji').style.display = 'none';
+                    } else {
+                        const icono = data.especie.toLowerCase().includes('gato') ? '🐱' : '🐶';
+                        document.getElementById('avatar-emoji').textContent = icono;
+                    }
+
+                    const telLimpio = data.telefono.replace(/\D/g, '');
+                    document.getElementById('btn-call').href = `tel:+${telLimpio}`;
+
+                    document.getElementById('btn-wa').addEventListener('click', () => {
+                        const baseMsg = `¡Hola ${data.dueno}! Encontré a ${data.nombre} usando su placa Dartha Pet.`;
+                        if ('geolocation' in navigator) {
+                            navigator.geolocation.getCurrentPosition(
+                                (pos) => {
+                                    const mapsUrl = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                                    const msg = `${baseMsg} Esta es mi ubicación actual: ${mapsUrl}`;
+                                    window.location.href = `https://wa.me/${telLimpio}?text=${encodeURIComponent(msg)}`;
+                                },
+                                () => {
+                                    window.location.href = `https://wa.me/${telLimpio}?text=${encodeURIComponent(baseMsg)}`;
+                                },
+                                { timeout: 4000 }
+                            );
+                        } else {
+                            window.location.href = `https://wa.me/${telLimpio}?text=${encodeURIComponent(baseMsg)}`;
+                        }
+                    });
+
+                    statusEl.style.display = 'none';
+                    cardEl.style.display = 'block';
+                })
+                .catch(() => {
+                    statusEl.textContent = '❌ No se encontró ninguna mascota registrada con este código.';
+                });
+        }
+    </script>
+</body>
+</html>
