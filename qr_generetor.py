@@ -41,16 +41,16 @@ def crear_registro_mascota(datos, url_base):
 URL_SITIO = "https://emmcabrera.github.io/dartha_pet"
 
 mascota_nueva = {
-    "id": "luna-001",
-    "nombre": "Luna",
-    "especie": "Gato",
-    "raza": "Siamés",
+    "id": "honey-001",
+    "nombre": "Honey Bella",
+    "especie": "Perro",
+    "raza": "Coquer spaniel",
     "edad": "2 años",
     "microchip": "981000012345678",
     "salud_notas": "Esterilizada. Toma medicación renal. Muy asustadiza.",
     "dueno": "Carlos Mendoza",
-    "telefono": "525512345678",
-    "direccion": "Av. Reforma 123, CDMX",
+    "telefono": "527441794526",
+    "direccion": "cuajimalpa, CDMX",
     "foto_url": ""
 }
 
