@@ -38,7 +38,7 @@ def crear_registro_mascota(datos, url_base):
 
 # --- EJEMPLO DE USO ---
 # Cambia esta URL por la de tu repositorio en GitHub Pages o dominio propio
-URL_SITIO = "https://tuusuario.github.io/dartha_pet"
+URL_SITIO = "https://emmcabrera.github.io/dartha_pet"
 
 mascota_nueva = {
     "id": "luna-001",
